@@ -2,6 +2,8 @@
 
 **Before you spend a weekend wiring MoE expert streaming, predict whether it can work at all.** This ~250-line oracle models sparsity x bandwidth x cache and returns tokens/sec plus a streamable/not verdict. You need it if you plan to run sparse MoE models from disk on consumer hardware.
 
+<p align="center"><img src="docs/demo.gif" alt="demo" width="720"></p>
+
 ## Problem
 
 Disk-streaming MoE inference (keeping only shared weights + activated experts in RAM, reading expert slabs from SSD on demand — the approach popularized by engines like [JustVugg/colibri](https://github.com/JustVugg/colibri), which runs a 744B-parameter model in ~9.9 GB RAM) is extremely sensitive to three numbers people usually guess at: activation rate (top-k of N), random-read bandwidth, and cache warmth. Most "poor-man's MoE" attempts die not on compute but on the disk wall — and the interesting B-side is that activation sparsity is measurable *before* building anything: it directly determines whether bandwidth becomes the bottleneck, and can even feed back into model design (choose N, k, and quantization so your target hardware streams).
